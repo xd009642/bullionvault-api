@@ -1,0 +1,9 @@
+[package]
+name = "bullionvault-api"
+version = "0.1.0"
+authors = ["xd009642 <danielmckenna93@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+hyper = "0.13.0-alpha.4"
+quick_xml = "0.17.0"
