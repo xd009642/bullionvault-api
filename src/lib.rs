@@ -86,7 +86,7 @@ pub enum TradeType {
 
 pub struct ViewMarketRequest {
     consideration_currency: Option<Currency>,
-    security_id: String,
+    security_id: SecurityId,
     quantity: f64,
     market_width: usize,
 }
@@ -113,31 +113,51 @@ pub struct CancelOrderResponse {
     order_id: u64,
     client_transfer_reference: String,
     action: ActionIndicator,
-    security_id: String,
+    security_id: SecurityId,
     consideration_currency: Option<Currency>,
     quantity: f64,
     quantity_matched: f64, 
     total_consideration: f64,
     total_commission: f64,
     limit: usize,
-    type_code: OrderCode,
+    order_type: OrderCode,
     order_time: DateTime<Utc>,
     good_until: Option<DateTime<Utc>>,
     last_modified: DateTime<Utc>,
-    status_code: String,
-    trade_type: String,
+    status_code: StatusCode,
+    trade_type: TradeType,
     order_value: f64,
 }
 
 pub struct PlaceOrderRequest {
     action: ActionIndicator,
     client_transfer_ref: String,
-    security_id: String,
+    security_id: SecurityId,
     consideration_currency: Option<Currency>,
     quantity: f64,
     limit: usize,
     type_code: OrderCode,
     good_until: Option<DateTime<Utc>>,
-    trade_type: String,
+    trade_type: TradeType,
     confirmed: bool,
+}
+
+
+pub struct ViewBalanceRequest {
+    simple: bool
+}
+
+pub struct ViewOrdersRequest {
+    security: SecurityId,
+    consideration_currency: Currency,
+    status: StatusCode,
+    from_data, Option<DateTime<Utc>>,
+    to_date: Option<DateTime<Utc>>,
+    page: usize,
+}
+
+
+pub struct ViewOrderRequest {
+    order_id: String,
+    client_transfer_reference: Option<String>,
 }
