@@ -11,10 +11,22 @@ pub enum Metal {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum WeightUnit {
+    Kilogram,
+    TroyOunce,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Currency {
     USD,
     GBP,
     EUR,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ClassNarrative {
+    Bullion(Metal),
+    Money(Currency),
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -26,6 +38,7 @@ pub enum Location {
     Singapore,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SecurityId(String);
 
 impl From<(Metal, Location)> for SecurityId {
@@ -34,7 +47,8 @@ impl From<(Metal, Location)> for SecurityId {
             Metal::Gold => "AU",
             Metal::Silver => "AG",
             Metal::Platinum => "PT",
-        }.to_string();
+        }
+        .to_string();
 
         let location = match params.1 {
             Location::Zurich => "ZU",
@@ -74,7 +88,7 @@ pub enum StatusCode {
     BadLimit,
     SilverRestricted,
     Queued,
-    AgipEnabled
+    AgipEnabled,
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -84,6 +98,7 @@ pub enum TradeType {
     ClientOrder,
 }
 
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct ViewMarketRequest {
     consideration_currency: Option<Currency>,
     security_id: SecurityId,
@@ -91,24 +106,26 @@ pub struct ViewMarketRequest {
     market_width: usize,
 }
 
-
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct ViewMarketResponse {
     buy_price: Vec<Price>,
     sell_price: Vec<Price>,
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Price {
     action: ActionIndicator,
     quantity: f64,
     limit: usize,
 }
 
-
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct CancelOrderRequest {
     order_id: u64,
     confirmed: bool,
 }
 
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct CancelOrderResponse {
     order_id: u64,
     client_transfer_reference: String,
@@ -116,7 +133,7 @@ pub struct CancelOrderResponse {
     security_id: SecurityId,
     consideration_currency: Option<Currency>,
     quantity: f64,
-    quantity_matched: f64, 
+    quantity_matched: f64,
     total_consideration: f64,
     total_commission: f64,
     limit: usize,
@@ -129,6 +146,7 @@ pub struct CancelOrderResponse {
     order_value: f64,
 }
 
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct PlaceOrderRequest {
     action: ActionIndicator,
     client_transfer_ref: String,
@@ -142,21 +160,58 @@ pub struct PlaceOrderRequest {
     confirmed: bool,
 }
 
-
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ViewBalanceRequest {
-    simple: bool
+    simple: bool,
 }
 
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
+pub struct ViewBalanceResponse {
+    client_positions: Vec<ClientPosition>,
+    pending_settlements: Vec<PendingSettlement>,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
+pub struct ClientPosition {
+    security: SecurityId,
+    available: f64,
+    total: f64,
+    narrative: ClassNarrative,
+    total_valuation: f64,
+    currency: Currency,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
+pub struct PendingSettlement {
+    security: SecurityId,
+    total: f64,
+    narrative: ClassNarrative,
+    total_valuation: f64,
+    currency: Currency,
+    transfers: Vec<PendingTransfer>,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
+pub struct PendingTransfer {
+    transfer_type: String,
+    lowest_ledger: String,
+    balance: f64,
+    due_date: DateTime<Utc>,
+    valuation: f64,
+    currency: Currency,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ViewOrdersRequest {
     security: SecurityId,
     consideration_currency: Currency,
     status: StatusCode,
-    from_data, Option<DateTime<Utc>>,
+    from_data: Option<DateTime<Utc>>,
     to_date: Option<DateTime<Utc>>,
     page: usize,
 }
 
-
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ViewOrderRequest {
     order_id: String,
     client_transfer_reference: Option<String>,
